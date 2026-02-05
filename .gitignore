@@ -1,0 +1,16 @@
+/bin
+.DS_STORE
+.DS_Store
+/.idea
+/.vscode
+/venv
+/.venv
+*.pyc
+__pycache__
+.coverage
+htmlcov
+.pytest_cache
+.ruff_cache/
+.mypy_cache/
+~$*
+interpretability/*.mp4
