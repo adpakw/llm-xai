@@ -13,4 +13,3 @@ htmlcov
 .ruff_cache/
 .mypy_cache/
 ~$*
-interpretability/*.mp4
