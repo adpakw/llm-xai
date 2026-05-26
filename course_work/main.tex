@@ -1,0 +1,174 @@
+\documentclass[a4paper,14pt]{extreport}
+
+% Русский язык и кодировка
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+
+% Математика и рисунки
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{xcolor}
+
+% Настройка полей (левое не менее 2 см)
+\geometry{
+    a4paper,
+    left=30mm,
+    right=15mm,
+    top=20mm,
+    bottom=20mm,
+}
+
+% Настройка шрифтов и абзацев
+\usepackage{setspace}
+\setstretch{1.3} % межстрочный интервал 1,3-1,5
+\setlength{\parindent}{1cm} % красная строка 1 см
+\setlength{\parskip}{0pt}
+
+% Настройка заголовков (без сокращений в названиях)
+\usepackage{titlesec}
+\titleformat{\chapter}
+    {\normalfont\bfseries\centering}{\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+
+% Настройка подписей рисунков и таблиц по ГОСТу
+\usepackage{caption}
+\captionsetup[figure]{labelsep=period, justification=centering}
+\captionsetup[table]{labelsep=period, justification=raggedright, singlelinecheck=off}
+
+% Нумерация страниц
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Чтобы титульник и аннотации не нумеровались
+\usepackage{chngcntr}
+\usepackage{etoolbox}
+
+% Настройка ссылок (ГОСТ)
+\usepackage[backend=biber, style=gost-numeric, sorting=none, language=auto, autolang=other]{biblatex}
+\addbibresource{references.bib}
+
+% Адресация для гиперссылок
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue,
+}
+
+\begin{document}
+
+% ------------------- ТИТУЛЬНЫЙ ЛИСТ -------------------
+\begin{titlepage}
+    \begin{center}
+        {\small \textbf{Федеральное государственное автономное образовательное учреждение высшего образования «Национальный исследовательский университет «Высшая школа экономики}}\\[10mm]
+        {\small \textbf{Факультет компьютерных наук}}\\
+        {\small \textbf{Магистерская программа «Машинное обучение в цифровом продукте»}}\\[30mm]
+        
+        {\bfseries \large \textbf{КУРСОВАЯ РАБОТА}}\\[20mm]
+    \end{center}
+    
+    \begin{flushleft}
+        {На тему (рус.): \underline{Интерпретируемость больших языковых моделей}}\\[3mm]
+        {На тему (англ.): \underline{Interpretability of Large Language Models}}\\[30mm]
+    \end{flushleft}
+
+    \begin{center}
+        \hfill\begin{minipage}{0.5\textwidth}
+            \raggedright
+            Студент: \hrulefill\\
+            (Ф.И.О., подпись)\\[5mm]
+            Руководитель КР: \hrulefill\\
+            (должность, звание, Ф.И.О., подпись)
+        \end{minipage}\\[30mm]
+        
+        {\large Москва, 2026}
+    \end{center}
+\end{titlepage}
+\newpage
+
+% ------------------- АННОТАЦИИ (БЕЗ НОМЕРОВ) -------------------
+\pagestyle{empty} % отключаем нумерацию
+\section*{Аннотация}
+\addcontentsline{toc}{chapter}{Аннотация}
+В данной курсовой работе представлен подробный обзор методов механистической интерпретируемости нейронных сетей, основанный на трёх ключевых публикациях. Рассматриваются: математический фреймворк трансформерных цепей, включая QK/OV-декомпозицию и концепцию «индукционных голов»; метод разложения активаций языковых моделей с помощью разреженных автокодировщиков для получения моносемантических признаков; а также подход трассировки цепей на основе кросс-слойных транскодеров и графов атрибуции. Для каждого метода приводятся основная идея, ключевые формулы, архитектура и результаты применения. Работа предназначена для исследователей в области безопасности и интерпретируемости больших языковых моделей.
+
+
+\vspace{15mm}
+
+\section*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+This paper provides a detailed survey of mechanistic interpretability methods for neural networks, drawing on three foundational publications. We review: the mathematical framework for transformer circuits, including QK/OV circuit decomposition and the concept of induction heads; the sparse autoencoder approach for decomposing language model activations into monosemantic features; and the circuit tracing methodology based on cross-layer transcoders and attribution graphs. For each method, we present the core idea, key mathematical formulations, architectural details, and empirical results. The work is intended for researchers in the field of safety and interpretability of large language models.
+
+
+\newpage
+
+% ------------------- СОДЕРЖАНИЕ -------------------
+\pagestyle{plain}
+\tableofcontents
+\newpage
+
+% ------------------- ВВЕДЕНИЕ -------------------
+\chapter*{Введение}
+\addcontentsline{toc}{chapter}{Введение}
+\pagestyle{plain}
+
+Языковые модели, основанные на архитектуре трансформера~\cite{vaswani2017attention}, достигли выдающихся результатов во многих задачах обработки естественного языка. Такие модели, как GPT, Qwen,Deepseek и им подобные, способны генерировать связный текст, решать задачи и писать код. Вместе с тем их внутренние механизмы остаются в значительной мере непрозрачными: модель представляет собой миллиарды числовых параметров, не поддающихся непосредственному человеческому анализу.
+
+Механистическая интерпретируемость ставит перед собой цель «реверс инжениринга» нейронных сетей, то есть понимания конкретных вычислительных механизмов, лежащих в основе наблюдаемого поведения. Это направление приобретает особую важность в контексте безопасности ИИ: систематическое понимание того, как именно модель принимает решения, позволяет обнаруживать нежелательное поведение, проверять соответствие целям разработчиков и предсказывать возможные сбои.
+
+В данной работе рассматриваются взаимосвязанные направления механистической интерпретируемости, представленных в публикациях исследовательской группы Anthropic:
+
+
+\newpage
+
+% ------------------- ГЛАВА 1 -------------------
+\chapter{Обзор методов интерпретируемости}
+
+% ------------------- ЗАКЛЮЧЕНИЕ -------------------
+\chapter*{Заключение}
+\addcontentsline{toc}{chapter}{Заключение}
+Краткий обзор результатов работы:
+\begin{itemize}
+    \item Достигнута цель...
+    \item Решены задачи...
+\end{itemize}
+\textbf{Перспективы дальнейшей деятельности:} ...
+
+% ------------------- БИБЛИОГРАФИЧЕСКИЙ СПИСОК -------------------
+\chapter*{Библиографический список}
+\addcontentsline{toc}{chapter}{Библиографический список}
+\printbibliography[heading=none]
+
+% ------------------- ПРИЛОЖЕНИЯ -------------------
+\appendix
+\chapter{Глоссарий}
+\section*{Терминологический словарь}
+\begin{description}
+    \item[Overfitting] Переобучение модели.
+    \item[Regularization] Регуляризация.
+\end{description}
+
+\chapter{Исходные данные экспериментов}
+\section{Протоколы}
+Текст протоколов.
+
+\chapter{Листинги кода (фрагменты)}
+\begin{verbatim}
+import numpy as np
+def loss(y_true, y_pred):
+    return np.mean((y_true - y_pred)**2)
+\end{verbatim}
+
+\end{document}
