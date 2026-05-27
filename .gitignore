@@ -13,3 +13,13 @@ htmlcov
 .ruff_cache/
 .mypy_cache/
 ~$*
+
+
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.out
+*.run.xml
+*.toc
