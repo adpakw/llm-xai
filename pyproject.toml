@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm-xai-sae-replication"
+version = "0.1.0"
+description = "Sparse autoencoder replication utilities for monosemanticity experiments."
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "torch>=2.2",
+    "transformer-lens>=2.0",
+    "datasets>=2.18",
+    "huggingface-hub>=0.22",
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "plotly>=5.20",
+    "tqdm>=4.66",
+    "ipykernel>=6.29",
+    "jupyter>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[project.scripts]
+sae-replication = "sae_replication.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
