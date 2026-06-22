@@ -1,37 +1,33 @@
-[build-system]
-requires = ["setuptools>=69", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "llm-xai-sae-replication"
 version = "0.1.0"
-description = "Sparse autoencoder replication utilities for monosemanticity experiments."
-readme = "README.md"
 requires-python = ">=3.10,<3.13"
 dependencies = [
-    "torch>=2.2",
-    "transformer-lens>=2.0",
     "datasets>=2.18",
     "huggingface-hub>=0.22",
+    "ipykernel>=6.29",
+    "jupyter>=1.0",
     "numpy>=1.26",
     "pandas>=2.2",
     "plotly>=5.20",
+    "torchaudio==2.11.0",
+    "torch>=2.2",
+    "torchvision==0.26.0",
     "tqdm>=4.66",
-    "ipykernel>=6.29",
-    "jupyter>=1.0",
+    "transformer-lens>=3",
+    "vllm>=0.23.0",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
-]
+[tool.uv]
+environments = ["sys_platform == 'linux'"]
 
-[project.scripts]
-sae-replication = "sae_replication.cli:main"
+[tool.uv.sources]
+torch = { index = "pytorch" }
+torchaudio = { index = "pytorch" }
+torchvision = { index = "pytorch" }
+vllm = { url = "https://github.com/vllm-project/vllm/releases/download/v0.23.0/vllm-0.23.0%2Bcu129-cp38-abi3-manylinux_2_28_x86_64.whl" }
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["src"]
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
