@@ -16,6 +16,7 @@ dependencies = [
     "tqdm>=4.66",
     "transformer-lens>=3",
     "vllm>=0.23.0",
+    "sae-lens>=6.44.4",
 ]
 
 [tool.uv]
